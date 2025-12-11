@@ -1,0 +1,24 @@
+2025-12-11 15:30:12 - INFO - Program started. Waiting for commands
+2025-12-11 15:31:16 - INFO - Command recieved : start
+2025-12-11 15:31:32 - INFO - Command recieved : move
+2025-12-11 15:31:32 - INFO - State change to 'moving'.Accumulated stopped=1765463492.0s, moving=0.0s
+2025-12-11 15:31:36 - INFO - Command recieved : stop
+2025-12-11 15:31:36 - INFO - State change to 'stopped'.Accumulated stopped=1765463492.0s, moving=4.6s
+2025-12-11 15:32:03 - INFO - Command recieved : finish
+2025-12-11 15:32:03 - INFO - Trip finished. Stopped=1765463518.8s, Moving=4.6s, Total=35309270.61€
+2025-12-11 15:32:25 - INFO - Command recieved : finish
+2025-12-11 15:32:25 - WARNING - User tried to finish a trip with no active trip.
+2025-12-11 15:32:54 - INFO - Command recieved : start
+2025-12-11 15:33:00 - INFO - Command recieved : stop
+2025-12-11 15:33:00 - INFO - State change to 'stopped'.Accumulated stopped=1765463580.6s, moving=0.0s
+2025-12-11 15:33:09 - INFO - Command recieved : start
+2025-12-11 15:33:09 - WARNING - User tried to start a trip while another was active
+2025-12-11 15:33:27 - INFO - Command recieved : move
+2025-12-11 15:33:27 - INFO - State change to 'moving'.Accumulated stopped=1765463607.8s, moving=0.0s
+2025-12-11 15:33:32 - INFO - Command recieved : stop
+2025-12-11 15:33:32 - INFO - State change to 'stopped'.Accumulated stopped=1765463607.8s, moving=4.5s
+2025-12-11 15:33:39 - INFO - Command recieved : start
+2025-12-11 15:33:39 - WARNING - User tried to start a trip while another was active
+2025-12-11 15:33:48 - INFO - Command recieved : finish
+2025-12-11 15:33:48 - INFO - Trip finished. Stopped=1765463623.8s, Moving=4.5s, Total=35309272.70€
+2025-12-11 15:33:51 - INFO - Command recieved : start
