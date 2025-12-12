@@ -1,0 +1,3 @@
+2025-12-12 17:59:22 | stopped=3.4s | moving=5.2s | total=0.33€
+2025-12-12 21:58:39 | stopped=6.9s | moving=7.1s | total=0.49€
+2025-12-12 22:00:27 | stopped=4.6s | moving=23.9s | total=1.29€
