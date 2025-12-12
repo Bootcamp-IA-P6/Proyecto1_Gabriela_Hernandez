@@ -1,17 +1,67 @@
 import time
 from utils.logger import setup_logger
+from utils.config import load_config, save_config
+from utils.history import save_trip
 
 logger = setup_logger()
+config = load_config(logger=logger)
+
+STOPPED_RATE = config["stopped_rate"]
+MOVING_RATE = config["moving_rate"]
 
 def calculate_fare(seconds_stopped, seconds_moving):
     """
     Funcion para calcular la tarifa total en euros 
-    stopped: 0.02 €/s
-    Mooving: 0.05 €/s
+    stopped_rate: €/s
+    moving_rate: €/s
     """
-    fare = seconds_stopped *0.02 + seconds_moving * 0.05
+    fare = seconds_stopped *STOPPED_RATE + seconds_moving * MOVING_RATE
+
+    logger.info(
+        f"Calculating fare | stopped={seconds_stopped:.1f}s, "
+        f"moving={seconds_moving:.1f}s, "
+        f"stopped_rate={STOPPED_RATE}, moving_rate={MOVING_RATE}, total={fare:.2f}€"
+    )
     print(f"Este es el total:{fare}")
     return fare 
+        
+def configure_prices():
+    """
+    Permite configurar las tarifas desde la CLI y guardarlas en config.json
+    """
+    global STOPPED_RATE, MOVING_RATE, config
+
+    print("\n--- Pricing configuration ---")
+    print(f"Current stopped rate: {STOPPED_RATE} €/s")
+    print(f"Current moving rate:  {MOVING_RATE} €/s")
+
+    new_stopped = input("New stopped rate (€/s) [Enter to keep current]: ").strip()
+    new_moving = input("New moving rate (€/s)  [Enter to keep current]: ").strip()
+
+    try:
+        if new_stopped:
+            STOPPED_RATE = float(new_stopped.replace(",", "."))
+        if new_moving:
+            MOVING_RATE = float(new_moving.replace(",", "."))
+
+        config["stopped_rate"] = STOPPED_RATE
+        config["moving_rate"] = MOVING_RATE
+
+        save_config(config, logger=logger)
+
+        print("\n✅ Prices updated successfully.")
+        print(f"Stopped: {STOPPED_RATE} €/s | Moving: {MOVING_RATE} €/s\n")
+
+        logger.info(
+            "Pricing updated by user | stopped_rate=%.3f, moving_rate=%.3f",
+            STOPPED_RATE,
+            MOVING_RATE,
+        )
+
+    except ValueError:
+        print("❌ Invalid input. Prices were not changed.")
+        logger.warning("Invalid pricing values entered by user.")
+
 
 def taximeter():
     """
@@ -22,8 +72,7 @@ def taximeter():
 
     logger.info("Program started. Waiting for commands")
 
-    trip_activate = False
-    start_time = 0
+    trip_activate = False    
     stopped_time = 0
     moving_time = 0 
     state = None
@@ -31,7 +80,7 @@ def taximeter():
 
     while True:
         command = input("> ").strip().lower()
-        logger.info(f"Command recieved : {command}")
+        logger.info(f"Command received : {command}")
 
         if command == "start":
             if trip_activate:
@@ -39,13 +88,15 @@ def taximeter():
                 logger.warning("User tried to start a trip while another was active")
                 continue
 
-            trip_activate = True
-            start_time = time.time()
+            trip_activate = True            
             stopped_time = 0 
             moving_time = 0 
             state = "stopped"
-            state_start_time = 0
+            state_start_time = time.time()
+            
+
             print("trip started.initial state: 'stopped'")
+            logger.info("Trip started. Initial state: stopped.")
 
         elif command in ("stop", "move"):
             if not trip_activate:
@@ -62,6 +113,7 @@ def taximeter():
                 
             state = "stopped" if command == "stop" else "moving"
             state_start_time = time.time()
+
             print(f"state change to '{state}'.")
             logger.info(
                 f"State change to '{state}'."
@@ -93,9 +145,14 @@ def taximeter():
                 f"Trip finished. Stopped={stopped_time:.1f}s, "
                 f"Moving={moving_time:.1f}s, Total={total_fare:.2f}€"
             )
+
+            save_trip(stopped_time, moving_time, total_fare, logger=logger)
                 
             trip_activate = False
             state = None
+
+        elif command == "prices":
+            configure_prices()
 
         elif command == "exit":
             print("exiting the program, goodbye")
