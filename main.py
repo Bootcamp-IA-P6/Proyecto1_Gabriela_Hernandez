@@ -1,6 +1,7 @@
 import time
 from utils.logger import setup_logger
 from utils.config import load_config, save_config
+from utils.history import save_trip
 
 logger = setup_logger()
 config = load_config(logger=logger)
@@ -21,10 +22,9 @@ def calculate_fare(seconds_stopped, seconds_moving):
         f"moving={seconds_moving:.1f}s, "
         f"stopped_rate={STOPPED_RATE}, moving_rate={MOVING_RATE}, total={fare:.2f}€"
     )
+    print(f"Este es el total:{fare}")
     return fare 
-        print(f"Este es el total:{fare}")
-
-
+        
 def configure_prices():
     """
     Permite configurar las tarifas desde la CLI y guardarlas en config.json
@@ -145,6 +145,8 @@ def taximeter():
                 f"Trip finished. Stopped={stopped_time:.1f}s, "
                 f"Moving={moving_time:.1f}s, Total={total_fare:.2f}€"
             )
+
+            save_trip(stopped_time, moving_time, total_fare, logger=logger)
                 
             trip_activate = False
             state = None
