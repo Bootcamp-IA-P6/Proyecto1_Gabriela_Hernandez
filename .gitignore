@@ -5,5 +5,5 @@ logs/
 *.log
 .env
 
-.txt
-.json
+*.txt
+*.json
