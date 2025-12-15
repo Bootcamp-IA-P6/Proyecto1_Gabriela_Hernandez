@@ -3,9 +3,13 @@ from utils.logger import setup_logger
 from utils.config import load_config, save_config
 from utils.history import save_trip
 from core.trip import Trip
+from infra.trip_repository_db import TripRepositoryDB
+
 
 logger = setup_logger()
 config = load_config(logger=logger)
+trip_repo = TripRepositoryDB()
+
 
 STOPPED_RATE = config["stopped_rate"]
 MOVING_RATE = config["moving_rate"]
@@ -133,6 +137,16 @@ def taximeter():
                 moving_time,
                 total_fare,
             )
+
+            trip_repo.save_trip(
+            stopped_time,
+            moving_time,
+            STOPPED_RATE,
+            MOVING_RATE,
+            total_fare
+            )
+            logger.info("Trip saved to database successfully.")
+
 
             save_trip(stopped_time, moving_time, total_fare, logger=logger)
                            
