@@ -1,11 +1,16 @@
 import streamlit as st
 from core.trip import Trip
 from utils.config import load_config
+from infra.trip_repository_db import TripRepositoryDB
+
 
 st.set_page_config(page_title="Taxímetro", page_icon="🚕", layout="centered")
 
 if "trip" not in st.session_state:
     st.session_state.trip = Trip()
+
+if "trip_repo" not in st.session_state:
+    st.session_state.trip_repo = TripRepositoryDB()    
 
 if "config" not in st.session_state:
     st.session_state.config = load_config()
@@ -72,7 +77,15 @@ def finalizar():
     try:
         stopped_s, moving_s = trip.finish()
         total = calc_fare(stopped_s, moving_s)
+        st.session_state.trip_repo.save_trip(
+            stopped_s,
+            moving_s,
+            STOPPED_RATE,
+            MOVING_RATE,
+            total
+        )
         st.session_state.last_result = (stopped_s, moving_s, total)
+        st.success(" Trayecto guardado en la base de datos")        
         st.toast("Trayecto finalizado", icon="🏁")
     except RuntimeError:
         st.warning("No hay un trayecto activo para finalizar.")
